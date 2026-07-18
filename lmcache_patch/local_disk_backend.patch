@@ -1,0 +1,58 @@
+--- /tmp/amd_export/lmcache_patch/local_disk_backend.ORIGINAL.py	2026-07-02 09:25:11.000000000 +0800
++++ /tmp/amd_export/lmcache_patch/local_disk_backend.PATCHED.py	2026-07-02 11:43:03.000000000 +0800
+@@ -433,6 +433,55 @@
+ 
+         return memory_obj
+ 
++    def batched_get_blocking(
++        self,
++        keys,
++    ):
++        # [PAR-READ PATCH] Override serial base impl. Allocate buffers serially
++        # (CPU allocator not assumed thread-safe), then read files concurrently
++        # via a thread pool so multi-disk RAID0 aggregate bandwidth is utilized.
++        if not keys:
++            return []
++        if len(keys) == 1:
++            return [self.get_blocking(keys[0])]
++        paths = []
++        mobjs = []
++        for key in keys:
++            with self.disk_lock:
++                meta = self.dict.get(key)
++                path = meta.path if meta is not None else None
++                dtype = meta.dtype if meta is not None else None
++                shape = meta.shape if meta is not None else None
++                fmt = meta.fmt if meta is not None else None
++            mo = None
++            if meta is not None:
++                mo = self.local_cpu_backend.allocate(shape, dtype, fmt)
++                if mo is not None:
++                    _m = self.dict.get(key)
++                    mo.metadata.cached_positions = (
++                        _m.cached_positions if _m is not None else None
++                    )
++            paths.append(path)
++            mobjs.append(mo)
++        pool = getattr(self, "_par_read_pool", None)
++        if pool is None:
++            from concurrent.futures import ThreadPoolExecutor
++            pool = ThreadPoolExecutor(
++                max_workers=32, thread_name_prefix="lmc_par_read"
++            )
++            self._par_read_pool = pool
++
++        def _rd(i):
++            if paths[i] is not None and mobjs[i] is not None:
++                self.read_file(keys[i], mobjs[i].byte_array, paths[i])
++
++        list(pool.map(_rd, range(len(keys))))
++        with self.disk_lock:
++            for key, mo in zip(keys, mobjs):
++                if mo is not None and key in self.dict:
++                    self.cache_policy.update_on_hit(key, self.dict)
++        return mobjs
++
+     async def batched_get_non_blocking(
+         self,
+         lookup_id: str,

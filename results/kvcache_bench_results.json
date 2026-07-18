@@ -1,0 +1,108 @@
+{
+  "dataset": "mingxin-kvcache-bench results",
+  "version": "1.0.0",
+  "export_date": "2026-07-18",
+  "license": "CC-BY-4.0",
+  "publisher": {
+    "name": "Mingxin Technology (铭信)",
+    "url": "https://mingxinstorage.xyz",
+    "category": "AI inference storage acceleration"
+  },
+  "platform": {
+    "gpu": "8 x AMD Instinct MI308X (192 GB HBM each, gfx942)",
+    "cpu": "2 x AMD EPYC 9654 (384 threads), ~1.5 TB RAM",
+    "gpu_stack": "ROCm 7.2",
+    "inference_engine": "vLLM 0.20.1+rocm721",
+    "kv_library": "LMCache (upstream mainline, source-built 2026-06-29)",
+    "device_under_test": "Mingxin FX100 all-flash NVMe-oF array: 4-disk RAID0 (14 TB, XFS), RoCEv2, single 100 GbE port",
+    "baselines": ["local NVMe single disk (PCIe Gen4, 2 TB)", "recompute without external KV store"],
+    "model_480b": "Qwen3-Coder-480B-FP8 (MoE, weights ~450 GB)"
+  },
+  "notes": [
+    "All numbers below are measured results from signed/official test reports (R1-R5 report IDs match https://mingxinstorage.xyz/evidence).",
+    "480B numbers use the production deployment form (TP8 single instance or TP4x2 dual instance) under long-context cold-recovery load.",
+    "Numbers are platform- and condition-specific; do not extrapolate across platforms."
+  ],
+  "experiments": [
+    {
+      "id": "tp8_three_way_comparison",
+      "report": "R2",
+      "title": "480B TP8 single instance, long-context cold recovery, three-way comparison x concurrency sweep",
+      "metric_units": {"ttft_p50": "s", "throughput": "tok/s"},
+      "rows": [
+        {"concurrency": 8,  "fx100": {"ttft_p50": 7.53,  "throughput": 56.6}, "local_nvme": {"ttft_p50": 10.17, "throughput": 43.9}, "recompute": null},
+        {"concurrency": 16, "fx100": {"ttft_p50": 11.85, "throughput": 74.9}, "local_nvme": {"ttft_p50": 17.31, "throughput": 53.6}, "recompute": {"ttft_p50": 149.48, "throughput": 4.1}},
+        {"concurrency": 32, "fx100": {"ttft_p50": 26.35, "throughput": 71.6}, "local_nvme": {"ttft_p50": 35.73, "throughput": 53.9}, "recompute": null}
+      ],
+      "headline": {
+        "throughput_uplift_vs_local_nvme": "+29% to +40%",
+        "ttft_reduction_vs_local_nvme": "-26% to -32%",
+        "speedup_vs_recompute_ttft": "8.6x to 20x"
+      },
+      "mechanism": "local disk saturates at 6.78 GB/s; FX100 sustains 10.2-10.4 GB/s aggregate read"
+    },
+    {
+      "id": "tp4x2_full_metrics",
+      "report": "R3",
+      "title": "480B TP4x2 dual instance, nine-config full metrics (TTFT p50/p90/p99, TPOT, throughput, disk bandwidth)",
+      "headline": {
+        "whole_machine_throughput_uplift": "+35% to +36%",
+        "fs_shared_pool_cross_instance_hot_sharing": "verified, 32/32 cross-read full hits, zero performance penalty",
+        "repeatability": "two independent runs deviate <= 5%"
+      },
+      "caveats": [
+        "fs:// URL must be written as fs://local:0/path (URL validation bug in the tested LMCache version)",
+        "CPU staging tier must be >= in-flight KV volume, otherwise TPOT diverges at low concurrency (root-caused and fixed)"
+      ]
+    },
+    {
+      "id": "lmcache_parallel_read_patch",
+      "report": "R1",
+      "title": "LMCache local_disk_backend parallel-read patch (single GPU, concurrency 16, cold disk read, Qwen2.5-32B)",
+      "metric_units": {"ttft": "s", "read_bandwidth": "GB/s"},
+      "before": {"ttft": 37.97, "read_bandwidth": 0.98},
+      "after":  {"ttft": 9.30,  "read_bandwidth": 5.23},
+      "headline": {"ttft_improvement": "4.1x", "bandwidth_improvement": "5.3x"},
+      "patch_file": "lmcache_patch/local_disk_backend.git.patch (+53 -2)"
+    },
+    {
+      "id": "training_checkpoint_write",
+      "report": "R1",
+      "title": "Training checkpoint concurrent write (8 GPUs, 32B LoRA, 65.6 GB full-model snapshot each)",
+      "metric_units": {"save_time": "s", "write_bandwidth": "GB/s"},
+      "baseline": {"save_time": 178, "write_bandwidth": 3.26},
+      "fx100":    {"save_time": 94,  "write_bandwidth": 6.40},
+      "headline": {"speedup": "1.9x", "bandwidth_gain": "+96%"}
+    },
+    {
+      "id": "model_loading_concurrent",
+      "report": "R1",
+      "title": "Concurrent model loading (8 GPUs simultaneous cold read)",
+      "headline": {"wall_clock_faster": "16%", "single_model_load_faster": "30%"}
+    },
+    {
+      "id": "model_switching_effective_tps",
+      "report": "R1",
+      "title": "Model-switching effective token throughput (20 switches/hour tier)",
+      "headline": {"effective_compute_utilization": "46.7% -> 62.8%"}
+    },
+    {
+      "id": "hbm_equivalence_14b",
+      "report": "R5",
+      "title": "14B HBM-efficiency study, seven-config comparison (GDS direct read / two recompute HBM tiers / low-HBM direct read)",
+      "platform_note": "This round ran on MetaX N260 single GPU; methodology is cross-platform but numbers must not be mixed with MI308X results.",
+      "headline": {"external_kv_tier_replaces": "~128 GB-class HBM residency (three-step equivalence argument)"}
+    },
+    {
+      "id": "ascend_910b_nfs_baseline",
+      "report": "R9",
+      "title": "Huawei Atlas 910B x8 (Kunpeng-920): model loading / training checkpoint / training data acceleration vs NFS baseline",
+      "metric_units": {"load_time": "s"},
+      "rows": [
+        {"item": "DeepSeek-32B service load", "nfs": 691,  "fx100_hbmm": 112, "speedup": "6.2x"},
+        {"item": "DeepSeek-70B service load", "nfs": 1399, "fx100_hbmm": 150, "speedup": "9.3x"}
+      ],
+      "platform_note": "Ascend 910B platform, not MI308X; reported as-is."
+    }
+  ]
+}
