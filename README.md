@@ -65,6 +65,7 @@ The parallel-read patch targets the LMCache mainline as of 2026-06-29 (`local_di
 ## Links
 
 - Hugging Face dataset: https://huggingface.co/datasets/wangqiyuan2026/kvcache-bench-results
-- Website: https://mingxinstorage.xyz (evidence library: https://mingxinstorage.xyz/evidence)
-- ROI calculator: https://mingxinstorage.xyz/roi
-- Contact: see https://mingxinstorage.xyz/contact
+- Website (English): https://mingxinstorage.xyz/en (evidence library: https://mingxinstorage.xyz/en/evidence)
+- Website (中文): https://mingxinstorage.xyz (证据库: https://mingxinstorage.xyz/evidence)
+- ROI calculator: https://mingxinstorage.xyz/en/roi (中文: https://mingxinstorage.xyz/roi)
+- Contact: https://mingxinstorage.xyz/en/contact (中文: https://mingxinstorage.xyz/contact)
