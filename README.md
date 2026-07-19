@@ -14,6 +14,7 @@ Reproducible benchmark suite and measured results for **LLM KV Cache tiered-stor
 | `analysis_probe/` | Metric aggregation (whole-machine p50/p90/p99, TPOT), cold-read forensics (per-request full-hit counting), LMCache backend/index probes. |
 | `results/` | **Structured measured results** (JSON + CSV) extracted from the signed/official reports — usable directly as a dataset. |
 | `reports/` | Full test reports (Markdown + PDF, Chinese): 480B TP8 long-context, TP4×2 dual-instance, full-metric summary, fs:// cross-instance hot-sharing verification. |
+| `reports/en/` | English reference translations of the reports above (AI-translated, number fidelity machine-verified; the signed Chinese originals are authoritative). |
 | `docs_EXPORT_README.md` | Original export manifest with file-by-file descriptions and reproduction walkthrough. |
 
 ## Headline results / 核心实测结果
