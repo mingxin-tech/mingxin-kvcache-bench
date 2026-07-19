@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mingxin-kvcache-bench"
+version = "1.0.0"
+description = "Reproducible KV-cache tiering benchmark suite and signed results for LLM inference storage (Qwen3-480B class on 8x AMD MI308X): throughput +29-40%, TTFT -26-32% vs local NVMe."
+readme = "PYPI_README.md"
+license = { text = "Apache-2.0" }
+authors = [{ name = "Mingxin (Tianjin) Semiconductor Equipment Co., Ltd." }]
+requires-python = ">=3.9"
+keywords = ["kv-cache", "llm-inference", "benchmark", "vllm", "lmcache", "nvme-of", "storage", "rocm", "mi308x"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: Apache Software License",
+    "Topic :: System :: Benchmark",
+    "Intended Audience :: Developers",
+]
+
+[project.urls]
+Homepage = "https://mingxinstorage.xyz/en"
+Repository = "https://github.com/mingxin-tech/mingxin-kvcache-bench"
+Dataset = "https://huggingface.co/datasets/wangqiyuan2026/kvcache-bench-results"
+
+[project.scripts]
+kvcache-bench = "mingxin_kvcache_bench.cli:main"
+
+[tool.setuptools]
+packages = ["mingxin_kvcache_bench"]
+
+[tool.setuptools.package-data]
+mingxin_kvcache_bench = ["data/*.json", "data/*.csv"]
