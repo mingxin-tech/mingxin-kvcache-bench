@@ -10,7 +10,7 @@ Headline measured results (Qwen3-Coder-480B-FP8 on 8× AMD Instinct MI308X, vLLM
 - Model loading vs NFS (Ascend 910B platform): **6.2–9.3×** faster
 
 All numbers come from signed/official test reports (R1–R5, R9); hosted PDFs at
-[mingxinstorage.xyz/en/evidence](https://mingxinstorage.xyz/en/evidence).
+[mingxinstorage.xyz/en/evidence](https://lvsuan.top/en/evidence).
 
 ## Install & use
 
@@ -30,7 +30,7 @@ parallel-read patch, analysis probes, raw data) lives in the GitHub repository:
 
 Dataset mirror: [huggingface.co/datasets/wangqiyuan2026/kvcache-bench-results](https://huggingface.co/datasets/wangqiyuan2026/kvcache-bench-results)
 
-MCP server (query these results from AI agents): `https://mingxinstorage.xyz/api/mcp`
+MCP server (query these results from AI agents): `https://lvsuan.top/api/mcp`
 
 ## Honesty & provenance
 

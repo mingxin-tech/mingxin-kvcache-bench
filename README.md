@@ -1,8 +1,8 @@
 # mingxin-kvcache-bench
 
-Reproducible benchmark suite and measured results for **LLM KV Cache tiered-storage acceleration** on AMD Instinct MI308X, by [Mingxin Technology](https://mingxinstorage.xyz) (铭信).
+Reproducible benchmark suite and measured results for **LLM KV Cache tiered-storage acceleration** on AMD Instinct MI308X, by [Mingxin Technology](https://lvsuan.top) (铭信).
 
-大模型推理 **KV Cache 分层存储加速**的可复现基准套件与实测结果（AMD Instinct MI308X ×8 / ROCm 7.2），由[铭信](https://mingxinstorage.xyz)发布。
+大模型推理 **KV Cache 分层存储加速**的可复现基准套件与实测结果（AMD Instinct MI308X ×8 / ROCm 7.2），由[铭信](https://lvsuan.top)发布。
 
 ## What's inside / 内容
 
@@ -66,7 +66,7 @@ The parallel-read patch targets the LMCache mainline as of 2026-06-29 (`local_di
 ## Links
 
 - Hugging Face dataset: https://huggingface.co/datasets/wangqiyuan2026/kvcache-bench-results
-- Website (English): https://mingxinstorage.xyz/en (evidence library: https://mingxinstorage.xyz/en/evidence)
-- Website (中文): https://mingxinstorage.xyz (证据库: https://mingxinstorage.xyz/evidence)
-- ROI calculator: https://mingxinstorage.xyz/en/roi (中文: https://mingxinstorage.xyz/roi)
-- Contact: https://mingxinstorage.xyz/en/contact (中文: https://mingxinstorage.xyz/contact)
+- Website (English): https://lvsuan.top/en (evidence library: https://lvsuan.top/en/evidence)
+- Website (中文): https://lvsuan.top (证据库: https://lvsuan.top/evidence)
+- ROI calculator: https://lvsuan.top/en/roi (中文: https://lvsuan.top/roi)
+- Contact: https://lvsuan.top/en/contact (中文: https://lvsuan.top/contact)

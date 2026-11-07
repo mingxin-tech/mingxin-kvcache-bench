@@ -36,7 +36,7 @@ def cmd_summary(_args: argparse.Namespace) -> int:
         for k, v in exp.get("headline", {}).items():
             print(f"    {k}: {v}")
     print()
-    print("Signed report PDFs: https://mingxinstorage.xyz/en/evidence")
+    print("Signed report PDFs: https://lvsuan.top/en/evidence")
     return 0
 
 
@@ -60,7 +60,7 @@ def cmd_roi(args: argparse.Namespace) -> int:
         print(f"  {tag:>12}: uplift {uplift:.0%} x cold-share {cold:.0%} "
               f"-> {gpu_equiv:.1f} GPU-equivalents freed, ~${value:,.0f}, ROI {roi:.2f}x")
     print()
-    print("Mid-scenario estimates, not commitments. Interactive: https://mingxinstorage.xyz/en/roi")
+    print("Mid-scenario estimates, not commitments. Interactive: https://lvsuan.top/en/roi")
     return 0
 
 

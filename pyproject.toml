@@ -19,7 +19,7 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://mingxinstorage.xyz/en"
+Homepage = "https://lvsuan.top/en"
 Repository = "https://github.com/mingxin-tech/mingxin-kvcache-bench"
 Dataset = "https://huggingface.co/datasets/wangqiyuan2026/kvcache-bench-results"
 
